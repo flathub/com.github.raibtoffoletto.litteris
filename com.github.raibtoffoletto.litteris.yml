@@ -18,7 +18,6 @@ finish-args:
 cleanup:
   - /include
   - /lib/pkgconfig
-  - /lib/debug
   - /lib/valadoc
   - /share/vala
   - /share/vala-0.40
