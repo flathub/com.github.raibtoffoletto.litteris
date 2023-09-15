@@ -8,7 +8,7 @@ command: com.github.raibtoffoletto.litteris
 finish-args:
   # X11
   - --share=ipc
-  - --socket=x11
+  - --socket=fallback-x11
   # Wayland
   - --socket=wayland
   # Writing to the FS
