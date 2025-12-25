@@ -1,15 +1,19 @@
 app-id: com.github.raibtoffoletto.litteris
-runtime: org.freedesktop.Platform
-runtime-version: '20.08'
-sdk: org.freedesktop.Sdk
-base: io.elementary.BaseApp
-base-version: juno-20.08
 command: com.github.raibtoffoletto.litteris
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+base: io.elementary.BaseApp
+base-version: circe-25.08
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.vala
+build-options:
+  prepend-path: /usr/lib/sdk/vala/bin/
+  prepend-ld-library-path: /usr/lib/sdk/vala/lib
+  prepend-pkg-config-path: /usr/lib/sdk/vala/lib/pkgconfig
 finish-args:
-  # X11
   - --share=ipc
-  - --socket=x11
-  # Wayland
+  - --socket=fallback-x11
   - --socket=wayland
   # Writing to the FS
   - --filesystem=home:create
@@ -18,21 +22,29 @@ finish-args:
 cleanup:
   - /include
   - /lib/pkgconfig
-  - /lib/debug
   - /lib/valadoc
   - /share/vala
   - /share/vala-0.40
   - /share/valadoc
   - /share/plank
 modules:
+  - name: libgee
+    sources:
+    - type: archive
+      url: https://download.gnome.org/sources/libgee/0.20/libgee-0.20.8.tar.xz
+      sha256: 189815ac143d89867193b0c52b7dc31f3aa108a15f04d6b5dca2b6adfad0b0ee
+
   - name: litteris
     buildsystem: meson
     sources:
       - type: git
         url: https://github.com/raibtoffoletto/litteris.git
-        tag: 0.1.7
-        commit: d1635d2e6af939e9134279ebb4d87de799793bef
+        tag: 0.1.9
       - type: patch
         path: appdata.patch
       - type: patch
         path: elementary-theme.patch
+    post-install:
+      - mkdir -p /app/share/icons/hicolor/scalable/apps
+      - mv /app/share/icons/hicolor/128x128@2/apps/${FLATPAK_ID}.svg /app/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
+      - find /app/share/icons/hicolor -type f -not -path "*scalable*" -not -path "*actions*" -name "*.svg" -delete
